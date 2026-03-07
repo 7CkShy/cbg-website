@@ -7,7 +7,7 @@ export default defineConfig(({mode}) => {
   const env = loadEnv(mode, '.', '');
   return {
     plugins: [react(), tailwindcss()],
-    base: './cbg-website/', // Set this to your repository name if deploying to GitHub Pages, e.g., '/cbg-website/'
+    base: '/cbg-website/', // Set this to your repository name if deploying to GitHub Pages, e.g., '/cbg-website/'
     define: {
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
     },
