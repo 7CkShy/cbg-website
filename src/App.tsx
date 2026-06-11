@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, useLocation, useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Globe, 
-  Users, 
-  BookOpen, 
-  Mail, 
-  MapPin, 
-  ExternalLink, 
-  ChevronRight, 
-  Menu, 
+import {
+  Globe,
+  Users,
+  BookOpen,
+  Mail,
+  MapPin,
+  ExternalLink,
+  ChevronRight,
+  Menu,
   X,
   Thermometer,
   Map,
   ArrowLeft,
   GraduationCap,
-  Lightbulb
+  Lightbulb,
+  Camera,
+  Calendar,
+  Heart,
+  ChevronLeft,
 } from 'lucide-react';
-import { TEAM_MEMBERS, PUBLICATIONS, RESEARCH_AREAS } from './constants';
+import { TEAM_MEMBERS, PUBLICATIONS, RESEARCH_AREAS, LIFE_EVENTS } from './constants';
 import { cn } from './lib/utils';
 
 const Navbar = () => {
@@ -36,6 +40,7 @@ const Navbar = () => {
     { name: '研究方向', href: '/research' },
     { name: '发表成果', href: '/publications' },
     { name: '团队成员', href: '/team' },
+    { name: '课题组生活', href: '/life' },
     { name: '联系我们', href: '/contact' },
   ];
 
@@ -453,6 +458,194 @@ const MemberDetail = () => {
   );
 };
 
+const LabLife = () => {
+  const categoryLabels: Record<string, string> = {
+    '聚餐': '聚餐',
+    '野外考察': '野外考察',
+    '团建活动': '团建活动',
+    '学术会议': '学术会议',
+    '日常': '日常',
+    '节日庆祝': '节日庆祝',
+  };
+
+  const categoryColors: Record<string, string> = {
+    '聚餐': 'bg-orange-100 text-orange-700',
+    '野外考察': 'bg-green-100 text-green-700',
+    '团建活动': 'bg-blue-100 text-blue-700',
+    '学术会议': 'bg-purple-100 text-purple-700',
+    '日常': 'bg-slate-100 text-slate-600',
+    '节日庆祝': 'bg-red-100 text-red-700',
+  };
+
+  return (
+    <div className="pt-32 pb-24 px-6 bg-white animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h3 className="text-sm font-bold text-brand-green tracking-widest uppercase mb-4">Lab Life</h3>
+          <h2 className="text-4xl md:text-5xl font-serif">课题组生活</h2>
+          <p className="text-slate-500 mt-4 max-w-xl mx-auto leading-relaxed">
+            科研之余，我们也是一个温暖的大家庭。这里记录了我们一起走过的美好时光。
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {LIFE_EVENTS.map((event) => (
+            <Link
+              key={event.id}
+              to={`/life/${event.id}`}
+              className="group bg-white rounded-3xl border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500"
+            >
+              <div className="relative aspect-[4/3] overflow-hidden">
+                <img
+                  src={event.coverImage}
+                  alt={event.title}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute top-4 left-4">
+                  <span className={cn(
+                    'px-3 py-1 rounded-full text-xs font-bold',
+                    categoryColors[event.category] || 'bg-slate-100 text-slate-600',
+                  )}>
+                    {categoryLabels[event.category]}
+                  </span>
+                </div>
+              </div>
+              <div className="p-6">
+                <div className="flex items-center gap-3 text-sm text-slate-400 mb-3">
+                  <Calendar size={14} />
+                  <span>{event.date}</span>
+                </div>
+                <h4 className="text-xl font-bold mb-3 group-hover:text-brand-green transition-colors">{event.title}</h4>
+                <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 font-light">
+                  {event.description}
+                </p>
+                <div className="mt-4 pt-4 border-t border-slate-50 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5 text-xs text-slate-400">
+                    <Camera size={14} />
+                    {event.images.length} 张照片
+                  </span>
+                  <span className="text-sm font-medium text-brand-green flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                    查看详情 <ChevronRight size={16} />
+                  </span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const LifeEventDetail = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const event = LIFE_EVENTS.find(e => e.id === id);
+
+  if (!event) return (
+    <div className="pt-32 text-center px-6">
+      <h2 className="text-2xl font-bold mb-4">未找到该活动</h2>
+      <Link to="/life" className="text-brand-green hover:underline">返回课题组生活</Link>
+    </div>
+  );
+
+  const categoryColors: Record<string, string> = {
+    '聚餐': 'bg-orange-100 text-orange-700',
+    '野外考察': 'bg-green-100 text-green-700',
+    '团建活动': 'bg-blue-100 text-blue-700',
+    '学术会议': 'bg-purple-100 text-purple-700',
+    '日常': 'bg-slate-100 text-slate-600',
+    '节日庆祝': 'bg-red-100 text-red-700',
+  };
+
+  return (
+    <div className="pt-32 pb-24 px-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="max-w-6xl mx-auto">
+        <button
+          onClick={() => navigate('/life')}
+          className="flex items-center gap-2 text-slate-500 hover:text-brand-green mb-12 transition-colors"
+        >
+          <ChevronLeft size={18} /> 返回课题组生活
+        </button>
+
+        <div className="grid lg:grid-cols-3 gap-12">
+          <div className="lg:col-span-2">
+            {/* Cover image */}
+            <div className="aspect-video rounded-3xl overflow-hidden mb-8 shadow-lg">
+              <img
+                src={event.coverImage}
+                alt={event.title}
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+
+            {/* Info */}
+            <div className="flex flex-wrap items-center gap-4 mb-6">
+              <span className={cn(
+                'px-4 py-1.5 rounded-full text-sm font-bold',
+                categoryColors[event.category] || 'bg-slate-100 text-slate-600',
+              )}>
+                {event.category}
+              </span>
+              <span className="flex items-center gap-2 text-slate-500 text-sm">
+                <Calendar size={16} /> {event.date}
+              </span>
+              <span className="flex items-center gap-2 text-slate-500 text-sm">
+                <Camera size={16} /> {event.images.length} 张照片
+              </span>
+            </div>
+
+            <h1 className="text-3xl md:text-4xl font-serif font-bold mb-8">{event.title}</h1>
+
+            <div className="prose prose-slate max-w-none">
+              <p className="text-lg text-slate-600 leading-relaxed font-light whitespace-pre-line">
+                {event.description}
+              </p>
+            </div>
+
+            <div className="mt-12 p-8 bg-brand-earth rounded-3xl border border-slate-100">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl bg-brand-green/10 flex items-center justify-center">
+                  <Heart size={20} className="text-brand-green" />
+                </div>
+                <p className="text-slate-500 text-sm font-light">
+                  课题组就是一个大家庭。我们不仅在学术上互相支持，也在生活中彼此陪伴。期待更多志同道合的朋友加入我们！
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar - all photos */}
+          <div className="lg:col-span-1">
+            <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
+              <Camera size={20} className="text-brand-green" />
+              活动照片
+            </h3>
+            <div className="space-y-4">
+              {event.images.map((img, i) => (
+                <div
+                  key={i}
+                  className="aspect-[4/3] rounded-2xl overflow-hidden border border-slate-100 hover:shadow-md transition-all"
+                >
+                  <img
+                    src={img}
+                    alt={`${event.title} - 照片 ${i + 1}`}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Contact = () => {
   return (
     <div className="pt-32 pb-24 px-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -552,6 +745,8 @@ export default function App() {
           <Route path="/publications" element={<Publications />} />
           <Route path="/team" element={<Team />} />
           <Route path="/team/:id" element={<MemberDetail />} />
+          <Route path="/life" element={<LabLife />} />
+          <Route path="/life/:id" element={<LifeEventDetail />} />
           <Route path="/contact" element={<Contact />} />
         </Routes>
       </main>

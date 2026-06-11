@@ -28,3 +28,13 @@ export interface ResearchArea {
   description: string;
   icon: string;
 }
+
+export interface LifeEvent {
+  id: string;
+  title: string;
+  date: string;
+  category: '聚餐' | '野外考察' | '团建活动' | '学术会议' | '日常' | '节日庆祝';
+  description: string;
+  coverImage: string;
+  images: string[];
+}
