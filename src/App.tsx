@@ -399,7 +399,6 @@ const Team = () => {
     if (!cohortGroups[key]) cohortGroups[key] = [];
     cohortGroups[key].push(m);
   });
-  // Keep insertion order (sorted by role)
   const cohortEntries = Object.entries(cohortGroups);
 
   const scrollToSection = (cohortId: string) => {
@@ -424,38 +423,40 @@ const Team = () => {
               const displayCohort = lang === 'en' && sample.cohortEn ? sample.cohortEn : cohortKey;
 
               return (
-                <div key={cohortKey} id={cohortId} className="mb-16 last:mb-0 scroll-mt-28">
-                  <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-6 border-b border-slate-100 pb-3">
+                <div key={cohortKey} id={cohortId} className="mb-20 last:mb-0 scroll-mt-28">
+                  <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-8 border-b border-slate-100 pb-3">
                     {displayCohort}
                     <span className="ml-2 text-slate-300 font-normal">({members.length})</span>
                   </h4>
-                  <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {members.map((member) => {
                       const displayName = lang === 'en' && member.nameEn ? member.nameEn : member.name;
+                      const displayRole = lang === 'en' && member.cohortEn ? member.cohortEn : (member.cohort || member.role);
                       return (
                         <Link
                           key={member.id}
                           to={`/team/${member.id}`}
-                          className="group flex items-center gap-6 p-4 rounded-2xl hover:bg-brand-earth/50 transition-colors"
+                          className="group relative aspect-[3/4] rounded-3xl overflow-hidden shadow-sm"
                         >
-                          <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden flex-shrink-0">
-                            <img
-                              src={member.image}
-                              alt={member.name}
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                              referrerPolicy="no-referrer"
-                            />
+                          {/* Photo */}
+                          <img
+                            src={member.image}
+                            alt={member.name}
+                            className="absolute inset-0 w-full h-full object-cover transition-all duration-600 group-hover:scale-110 group-hover:rotate-3"
+                            referrerPolicy="no-referrer"
+                          />
+
+                          {/* Brand overlay — slides down from top on hover */}
+                          <div className="absolute inset-0 bg-gradient-to-b from-brand-green/85 via-brand-green/70 to-brand-green/50 -translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out flex items-center justify-center">
+                            <span className="px-6 py-2.5 rounded-full border-2 border-white/60 text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-all delay-200 duration-300 translate-y-4 group-hover:translate-y-0">
+                              {t('team.viewDetail')}
+                            </span>
                           </div>
-                          <div className="flex-grow min-w-0">
-                            <h5 className="text-base font-bold mb-1 group-hover:text-brand-green transition-colors">
-                              {displayName}
-                            </h5>
-                            <p className="text-sm text-slate-500 font-light line-clamp-1">
-                              {lang === 'en' && member.descriptionEn ? member.descriptionEn : member.description}
-                            </p>
-                          </div>
-                          <div className="flex-shrink-0">
-                            <ChevronRight size={18} className="text-slate-300 group-hover:text-brand-green group-hover:translate-x-1 transition-all" />
+
+                          {/* Name bar at bottom */}
+                          <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/70 via-black/40 to-transparent group-hover:opacity-0 transition-opacity duration-300">
+                            <h5 className="text-white font-bold text-lg leading-tight">{displayName}</h5>
+                            <p className="text-white/60 text-xs mt-0.5">{displayRole}</p>
                           </div>
                         </Link>
                       );
