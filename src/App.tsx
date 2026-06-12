@@ -29,15 +29,24 @@ import { cn } from './lib/utils';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isNearTop, setIsNearTop] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const { t, lang, toggleLang } = useI18n();
   const isHome = location.pathname === '/';
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 80);
+    const handleScroll = () => setIsScrolled(window.scrollY > window.innerHeight * 0.8);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setIsNearTop(e.clientY <= 80);
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
   const navLinks = [
@@ -49,15 +58,18 @@ const Navbar = () => {
     { key: 'nav.contact', href: '/contact' },
   ];
 
-  // On homepage: navbar hidden at top, slides in when scrolled
-  // On other pages: navbar always visible with solid background
-  const isHidden = isHome && !isScrolled;
+  // On homepage:
+  //   - Not scrolled past hero → mouse near top shows navbar, away hides it (transparent bg)
+  //   - Scrolled past hero → navbar always visible (solid white bg)
+  // On other pages: navbar always visible (solid white bg)
+  const isHidden = isHome && !isScrolled && !isNearTop;
+  const isSolid = !isHome || isScrolled;
 
   return (
     <nav className={cn(
       "fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-6 py-4",
       isHidden ? "-translate-y-full" : "translate-y-0",
-      !isHome ? "bg-white/80 backdrop-blur-md shadow-sm py-3" : isScrolled ? "bg-white/80 backdrop-blur-md shadow-sm py-3" : "bg-transparent"
+      isSolid ? "bg-white/80 backdrop-blur-md shadow-sm py-3" : "bg-transparent"
     )}>
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <Link to="/" className="flex items-center gap-2">
@@ -67,11 +79,11 @@ const Navbar = () => {
           <div>
             <h1 className={cn(
               "font-serif font-bold text-xl leading-tight",
-              !isHidden ? "text-brand-green" : "text-white"
+              isSolid ? "text-brand-green" : "text-white"
             )}>{lang === 'zh' ? '保护生物地理研究组' : 'Conservation Biogeography Group'}</h1>
             <p className={cn(
               "text-[10px] uppercase tracking-widest opacity-70 font-sans",
-              !isHidden ? "text-slate-500" : "text-white"
+              isSolid ? "text-slate-500" : "text-white"
             )}>{lang === 'zh' ? 'Conservation Biogeography Group' : 'Yunnan University'}</p>
           </div>
         </Link>
@@ -84,7 +96,7 @@ const Navbar = () => {
               to={link.href}
               className={cn(
                 "text-sm font-medium transition-colors",
-                !isHidden
+                isSolid
                   ? "text-slate-600 hover:text-brand-green"
                   : "text-white/80 hover:text-white"
               )}
@@ -99,7 +111,7 @@ const Navbar = () => {
             rel="noopener noreferrer"
             className={cn(
               "p-1.5 rounded-lg transition-colors",
-              !isHidden
+              isSolid
                 ? "text-slate-500 hover:text-brand-green"
                 : "text-white/70 hover:text-white"
             )}
@@ -112,7 +124,7 @@ const Navbar = () => {
             onClick={toggleLang}
             className={cn(
               "flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium border transition-all",
-              !isHidden
+              isSolid
                 ? "border-slate-200 text-slate-600 hover:border-brand-green hover:text-brand-green"
                 : "border-white/30 text-white/80 hover:border-white hover:text-white"
             )}
@@ -127,7 +139,7 @@ const Navbar = () => {
         <button
           className={cn(
             "md:hidden p-2",
-            !isHidden ? "text-slate-900" : "text-white"
+            isSolid ? "text-slate-900" : "text-white"
           )}
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
@@ -184,7 +196,7 @@ const Home = () => {
 
   return (
     <div className="animate-in fade-in duration-700">
-      {/* Hero: full-screen team photo only */}
+      {/* Hero: full-screen team photo with group name overlay */}
       <section className="relative h-screen overflow-hidden">
         <img
           src="/image/team/home.jpg"
@@ -192,7 +204,16 @@ const Home = () => {
           className="w-full h-full object-cover"
           referrerPolicy="no-referrer"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-brand-earth"></div>
+        {/* Group name overlay */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <h1 className="text-5xl md:text-7xl font-serif font-bold text-white drop-shadow-lg mb-4 text-center px-4">
+            {lang === 'zh' ? '保护生物地理研究组' : 'Conservation Biogeography Group'}
+          </h1>
+          <p className="text-lg md:text-xl text-white/80 drop-shadow-md tracking-widest uppercase">
+            {lang === 'zh' ? '云南大学 · 国际河流与生态安全研究院' : 'Institute of International Rivers and Eco-Security, Yunnan University'}
+          </p>
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-brand-earth pointer-events-none"></div>
       </section>
 
       <section className="py-24 px-6">
