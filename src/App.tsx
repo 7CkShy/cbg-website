@@ -20,34 +20,44 @@ import {
   Calendar,
   Heart,
   ChevronLeft,
+  Github,
+  Languages,
 } from 'lucide-react';
 import { TEAM_MEMBERS, PUBLICATIONS, RESEARCH_AREAS, LIFE_EVENTS } from './constants';
+import { useI18n } from './i18n.tsx';
 import { cn } from './lib/utils';
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const { t, lang, toggleLang } = useI18n();
+  const isHome = location.pathname === '/';
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    const handleScroll = () => setIsScrolled(window.scrollY > 80);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const navLinks = [
-    { name: '首页', href: '/' },
-    { name: '研究方向', href: '/research' },
-    { name: '发表成果', href: '/publications' },
-    { name: '团队成员', href: '/team' },
-    { name: '课题组生活', href: '/life' },
-    { name: '联系我们', href: '/contact' },
+    { key: 'nav.home', href: '/' },
+    { key: 'nav.research', href: '/research' },
+    { key: 'nav.publications', href: '/publications' },
+    { key: 'nav.team', href: '/team' },
+    { key: 'nav.life', href: '/life' },
+    { key: 'nav.contact', href: '/contact' },
   ];
+
+  // On homepage: navbar hidden at top, slides in when scrolled
+  // On other pages: navbar always visible with solid background
+  const isHidden = isHome && !isScrolled;
 
   return (
     <nav className={cn(
-      "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-4",
-      isScrolled || location.pathname !== '/' ? "bg-white/80 backdrop-blur-md shadow-sm py-3" : "bg-transparent"
+      "fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-6 py-4",
+      isHidden ? "-translate-y-full" : "translate-y-0",
+      !isHome ? "bg-white/80 backdrop-blur-md shadow-sm py-3" : isScrolled ? "bg-white/80 backdrop-blur-md shadow-sm py-3" : "bg-transparent"
     )}>
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <Link to="/" className="flex items-center gap-2">
@@ -57,38 +67,67 @@ const Navbar = () => {
           <div>
             <h1 className={cn(
               "font-serif font-bold text-xl leading-tight",
-              isScrolled || location.pathname !== '/' ? "text-brand-green" : "text-white"
-            )}>保护生物地理研究组</h1>
+              !isHidden ? "text-brand-green" : "text-white"
+            )}>{lang === 'zh' ? '保护生物地理研究组' : 'Conservation Biogeography Group'}</h1>
             <p className={cn(
               "text-[10px] uppercase tracking-widest opacity-70 font-sans",
-              isScrolled || location.pathname !== '/' ? "text-slate-500" : "text-white"
-            )}>Conservation Biogeography Group</p>
+              !isHidden ? "text-slate-500" : "text-white"
+            )}>{lang === 'zh' ? 'Conservation Biogeography Group' : 'Yunnan University'}</p>
           </div>
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-6">
           {navLinks.map((link) => (
-            <Link 
-              key={link.name} 
+            <Link
+              key={link.key}
               to={link.href}
               className={cn(
                 "text-sm font-medium transition-colors",
-                isScrolled || location.pathname !== '/' 
-                  ? "text-slate-600 hover:text-brand-green" 
+                !isHidden
+                  ? "text-slate-600 hover:text-brand-green"
                   : "text-white/80 hover:text-white"
               )}
             >
-              {link.name}
+              {t(link.key)}
             </Link>
           ))}
+          {/* GitHub icon */}
+          <a
+            href="https://github.com/7CkShy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              "p-1.5 rounded-lg transition-colors",
+              !isHidden
+                ? "text-slate-500 hover:text-brand-green"
+                : "text-white/70 hover:text-white"
+            )}
+            title="GitHub"
+          >
+            <Github size={18} />
+          </a>
+          {/* Language toggle */}
+          <button
+            onClick={toggleLang}
+            className={cn(
+              "flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium border transition-all",
+              !isHidden
+                ? "border-slate-200 text-slate-600 hover:border-brand-green hover:text-brand-green"
+                : "border-white/30 text-white/80 hover:border-white hover:text-white"
+            )}
+            title={t('lang.switch')}
+          >
+            <Languages size={14} />
+            {t('lang.switch')}
+          </button>
         </div>
 
         {/* Mobile Toggle */}
-        <button 
+        <button
           className={cn(
             "md:hidden p-2",
-            isScrolled || location.pathname !== '/' ? "text-slate-900" : "text-white"
+            !isHidden ? "text-slate-900" : "text-white"
           )}
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
@@ -106,15 +145,33 @@ const Navbar = () => {
             className="absolute top-full left-0 right-0 bg-white shadow-xl p-6 md:hidden flex flex-col gap-4"
           >
             {navLinks.map((link) => (
-              <Link 
-                key={link.name} 
+              <Link
+                key={link.key}
                 to={link.href}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="text-lg font-medium py-2 border-b border-slate-100 text-slate-900"
               >
-                {link.name}
+                {t(link.key)}
               </Link>
             ))}
+            <div className="flex items-center gap-4 pt-2">
+              <a
+                href="https://github.com/7CkShy-L/cbg-website"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 text-slate-600 hover:text-brand-green transition-colors"
+                title="GitHub"
+              >
+                <Github size={20} />
+              </a>
+              <button
+                onClick={() => { toggleLang(); setIsMobileMenuOpen(false); }}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium border border-slate-200 text-slate-600 hover:border-brand-green hover:text-brand-green transition-all"
+              >
+                <Languages size={16} />
+                {t('lang.switch')}
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -123,70 +180,31 @@ const Navbar = () => {
 };
 
 const Home = () => {
+  const { t, lang } = useI18n();
+
   return (
     <div className="animate-in fade-in duration-700">
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <img 
-            src="/image/team/home.jpg" 
-            alt="Nature background" 
-            className="w-full h-full object-cover brightness-50"
-            referrerPolicy="no-referrer"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-brand-earth"></div>
-        </div>
-        
-        <div className="relative z-10 max-w-4xl mx-auto text-center px-6">
-          <motion.span 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="inline-block px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md text-white border border-white/20 text-xs font-medium tracking-widest uppercase mb-6"
-          >
-            探索自然规律 · 守护生物多样性
-          </motion.span>
-          <motion.h2 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-5xl md:text-7xl font-serif text-white mb-8 leading-tight"
-          >
-            保护生物地理研究组
-            <span className="block text-2xl md:text-3xl mt-4 font-sans font-light opacity-90">Conservation Biogeography Research Group</span>
-          </motion.h2>
-          <motion.p 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-lg text-white/80 max-w-2xl mx-auto mb-10 font-light leading-relaxed"
-          >
-            我们致力于研究生物多样性的空间分布格局及其驱动机制，利用多学科手段为全球变化背景下的生物多样性保护提供科学依据。
-          </motion.p>
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="flex flex-wrap justify-center gap-4"
-          >
-            <Link to="/research" className="px-8 py-4 bg-brand-green text-white rounded-full font-medium hover:bg-opacity-90 transition-all flex items-center gap-2">
-              了解我们的研究 <ChevronRight size={18} />
-            </Link>
-            <Link to="/publications" className="px-8 py-4 bg-white/10 backdrop-blur-md text-white border border-white/30 rounded-full font-medium hover:bg-white/20 transition-all">
-              查看发表成果
-            </Link>
-          </motion.div>
-        </div>
+      {/* Hero: full-screen team photo only */}
+      <section className="relative h-screen overflow-hidden">
+        <img
+          src="/image/team/home.jpg"
+          alt="Conservation Biogeography Group"
+          className="w-full h-full object-cover"
+          referrerPolicy="no-referrer"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-brand-earth"></div>
       </section>
 
       <section className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h3 className="text-sm font-bold text-brand-green tracking-widest uppercase mb-4">Latest Research</h3>
-            <h2 className="text-4xl md:text-5xl font-serif">近期发表成果</h2>
+            <h3 className="text-sm font-bold text-brand-green tracking-widest uppercase mb-4">{t('home.latestResearch')}</h3>
+            <h2 className="text-4xl md:text-5xl font-serif">{t('home.recentPubs')}</h2>
           </div>
 
           <div className="space-y-6">
             {PUBLICATIONS.slice(0, 3).map((pub) => (
-              <div 
+              <div
                 key={pub.id}
                 className="group bg-white p-6 md:p-8 rounded-2xl border border-slate-100 hover:shadow-lg transition-all flex flex-col md:flex-row md:items-center gap-6"
               >
@@ -195,15 +213,15 @@ const Home = () => {
                   <span className="text-lg font-bold">{pub.year}</span>
                 </div>
                 <div className="flex-grow">
-                  <h4 className="text-xl font-bold mb-2 group-hover:text-brand-green transition-colors">{pub.title}</h4>
+                  <h4 className="text-xl font-bold mb-2 group-hover:text-brand-green transition-colors">{lang === 'en' && pub.titleEn ? pub.titleEn : pub.title}</h4>
                   <p className="text-slate-600 mb-1">{pub.authors}</p>
                   <p className="text-sm italic text-slate-400">{pub.journal}</p>
                 </div>
                 <div className="flex-shrink-0">
                   {pub.doi && (
-                    <a 
-                      href={`https://doi.org/${pub.doi}`} 
-                      target="_blank" 
+                    <a
+                      href={`https://doi.org/${pub.doi}`}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 text-sm font-medium text-brand-green hover:underline"
                     >
@@ -214,10 +232,10 @@ const Home = () => {
               </div>
             ))}
           </div>
-          
+
           <div className="mt-12 text-center">
             <Link to="/publications" className="px-8 py-3 border border-brand-green text-brand-green rounded-full font-medium hover:bg-brand-green hover:text-white transition-all">
-              查看全部发表成果
+              {t('home.viewAllPubs')}
             </Link>
           </div>
         </div>
@@ -227,6 +245,7 @@ const Home = () => {
 };
 
 const Research = () => {
+  const { t, lang } = useI18n();
   const iconMap: Record<string, any> = {
     Globe: Globe,
     Thermometer: Thermometer,
@@ -238,11 +257,11 @@ const Research = () => {
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div className="max-w-2xl">
-            <h3 className="text-sm font-bold text-brand-green tracking-widest uppercase mb-4">Research Focus</h3>
-            <h2 className="text-4xl md:text-5xl font-serif">核心研究方向</h2>
+            <h3 className="text-sm font-bold text-brand-green tracking-widest uppercase mb-4">{t('research.subtitle')}</h3>
+            <h2 className="text-4xl md:text-5xl font-serif">{t('research.title')}</h2>
           </div>
           <p className="text-slate-500 max-w-md">
-            我们结合野外考察、遥感监测和生态模型，在多个尺度上探讨生物地理学与保护生物学的交叉课题。
+            {t('research.description')}
           </p>
         </div>
 
@@ -250,16 +269,16 @@ const Research = () => {
           {RESEARCH_AREAS.map((area) => {
             const Icon = iconMap[area.icon] || Globe;
             return (
-              <div 
+              <div
                 key={area.id}
                 className="p-8 rounded-3xl bg-brand-earth border border-slate-100 group transition-all"
               >
                 <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-brand-green shadow-sm mb-6">
                   <Icon size={28} />
                 </div>
-                <h4 className="text-xl font-bold mb-4">{area.title}</h4>
+                <h4 className="text-xl font-bold mb-4">{lang === 'en' && area.titleEn ? area.titleEn : area.title}</h4>
                 <p className="text-slate-600 leading-relaxed font-light">
-                  {area.description}
+                  {lang === 'en' && area.descriptionEn ? area.descriptionEn : area.description}
                 </p>
               </div>
             );
@@ -271,17 +290,18 @@ const Research = () => {
 };
 
 const Publications = () => {
+  const { t, lang } = useI18n();
   return (
     <div className="pt-32 pb-24 px-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h3 className="text-sm font-bold text-brand-green tracking-widest uppercase mb-4">Our Impact</h3>
-          <h2 className="text-4xl md:text-5xl font-serif">发表成果</h2>
+          <h3 className="text-sm font-bold text-brand-green tracking-widest uppercase mb-4">{t('publications.subtitle')}</h3>
+          <h2 className="text-4xl md:text-5xl font-serif">{t('publications.title')}</h2>
         </div>
 
         <div className="space-y-6">
           {PUBLICATIONS.map((pub) => (
-            <div 
+            <div
               key={pub.id}
               className="group bg-white p-6 md:p-8 rounded-2xl border border-slate-100 hover:shadow-lg transition-all flex flex-col md:flex-row md:items-center gap-6"
             >
@@ -290,15 +310,15 @@ const Publications = () => {
                 <span className="text-lg font-bold">{pub.year}</span>
               </div>
               <div className="flex-grow">
-                <h4 className="text-xl font-bold mb-2 group-hover:text-brand-green transition-colors">{pub.title}</h4>
+                <h4 className="text-xl font-bold mb-2 group-hover:text-brand-green transition-colors">{lang === 'en' && pub.titleEn ? pub.titleEn : pub.title}</h4>
                 <p className="text-slate-600 mb-1">{pub.authors}</p>
                 <p className="text-sm italic text-slate-400">{pub.journal}</p>
               </div>
               <div className="flex-shrink-0">
                 {pub.doi && (
-                  <a 
-                    href={`https://doi.org/${pub.doi}`} 
-                    target="_blank" 
+                  <a
+                    href={`https://doi.org/${pub.doi}`}
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 text-sm font-medium text-brand-green hover:underline"
                   >
@@ -315,46 +335,54 @@ const Publications = () => {
 };
 
 const Team = () => {
+  const { t, lang } = useI18n();
   const roles = ['Faculty', 'Postdoc', 'PhD Student', 'Master Student'];
-  
+
+  const roleLabels: Record<string, string> = {
+    'Faculty': t('team.faculty'),
+    'Postdoc': t('team.postdoc'),
+    'PhD Student': t('team.phd'),
+    'Master Student': t('team.master'),
+  };
+
   return (
     <div className="pt-32 pb-24 px-6 bg-white animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h3 className="text-sm font-bold text-brand-green tracking-widest uppercase mb-4">The Team</h3>
-          <h2 className="text-4xl md:text-5xl font-serif">团队成员</h2>
+          <h3 className="text-sm font-bold text-brand-green tracking-widest uppercase mb-4">{t('team.subtitle')}</h3>
+          <h2 className="text-4xl md:text-5xl font-serif">{t('team.title')}</h2>
         </div>
 
         {roles.map(role => {
           const members = TEAM_MEMBERS.filter(m => m.role === role);
           if (members.length === 0) return null;
-          
+
           return (
             <div key={role} className="mb-20 last:mb-0">
               <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-8 border-b border-slate-100 pb-4">
-                {role === 'Faculty' ? '指导教师' : role === 'Postdoc' ? '博士后' : role === 'PhD Student' ? '博士研究生' : '硕士研究生'}
+                {roleLabels[role]}
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                 {members.map((member) => (
-                  <Link 
+                  <Link
                     key={member.id}
                     to={`/team/${member.id}`}
                     className="group"
                   >
                     <div className="relative aspect-square rounded-3xl overflow-hidden mb-6">
-                      <img 
-                        src={member.image} 
-                        alt={member.name} 
+                      <img
+                        src={member.image}
+                        alt={member.name}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         referrerPolicy="no-referrer"
                       />
                       <div className="absolute inset-0 bg-brand-green/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <span className="bg-white text-brand-green px-4 py-2 rounded-full text-xs font-bold shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform">查看详情</span>
+                        <span className="bg-white text-brand-green px-4 py-2 rounded-full text-xs font-bold shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform">{t('team.viewDetail')}</span>
                       </div>
                     </div>
                     <h5 className="text-xl font-bold mb-1 group-hover:text-brand-green transition-colors">{member.name}</h5>
                     <p className="text-sm text-brand-green font-medium mb-3">{member.role}</p>
-                    <p className="text-sm text-slate-500 font-light line-clamp-2">{member.description}</p>
+                    <p className="text-sm text-slate-500 font-light line-clamp-2">{lang === 'en' && member.descriptionEn ? member.descriptionEn : member.description}</p>
                   </Link>
                 ))}
               </div>
@@ -369,32 +397,38 @@ const Team = () => {
 const MemberDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t, lang } = useI18n();
   const member = TEAM_MEMBERS.find(m => m.id === id);
 
-  if (!member) return <div className="pt-32 text-center">Member not found</div>;
+  if (!member) return <div className="pt-32 text-center">{t('member.notFound')}</div>;
+
+  const displayName = lang === 'en' && member.nameEn ? member.nameEn : member.name;
+  const displayBio = lang === 'en' && member.fullBioEn ? member.fullBioEn : (member.fullBio || member.description);
+  const displayEdu = lang === 'en' && member.educationEn ? member.educationEn : member.education;
+  const displayInterests = lang === 'en' && member.researchInterestsEn ? member.researchInterestsEn : member.researchInterests;
 
   return (
     <div className="pt-32 pb-24 px-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="max-w-5xl mx-auto">
-        <button 
+        <button
           onClick={() => navigate(-1)}
           className="flex items-center gap-2 text-slate-500 hover:text-brand-green mb-12 transition-colors"
         >
-          <ArrowLeft size={18} /> 返回团队列表
+          <ArrowLeft size={18} /> {t('team.backToList')}
         </button>
 
         <div className="grid md:grid-cols-3 gap-12">
           <div className="md:col-span-1">
             <div className="aspect-square rounded-3xl overflow-hidden mb-8 shadow-xl">
-              <img 
-                src={member.image} 
-                alt={member.name} 
+              <img
+                src={member.image}
+                alt={member.name}
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />
             </div>
             <div className="space-y-4">
-              <h1 className="text-3xl font-serif font-bold">{member.name}</h1>
+              <h1 className="text-3xl font-serif font-bold">{displayName}</h1>
               <p className="text-brand-green font-medium">{member.role}</p>
               {member.email && (
                 <div className="flex items-center gap-3 text-slate-600">
@@ -405,7 +439,7 @@ const MemberDetail = () => {
               {member.website && (
                 <div className="flex items-center gap-3 text-slate-600">
                   <Globe size={18} className="text-brand-green" />
-                  <a href={member.website} target="_blank" rel="noopener noreferrer" className="hover:underline">个人主页</a>
+                  <a href={member.website} target="_blank" rel="noopener noreferrer" className="hover:underline">{t('team.website')}</a>
                 </div>
               )}
             </div>
@@ -414,20 +448,20 @@ const MemberDetail = () => {
           <div className="md:col-span-2 space-y-12">
             <section>
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2 border-b border-slate-200 pb-2">
-                <Users size={20} className="text-brand-green" /> 个人简介
+                <Users size={20} className="text-brand-green" /> {t('team.bio')}
               </h2>
               <p className="text-slate-600 leading-relaxed font-light text-lg">
-                {member.fullBio || member.description}
+                {displayBio}
               </p>
             </section>
 
-            {member.education && (
+            {displayEdu && (
               <section>
                 <h2 className="text-xl font-bold mb-4 flex items-center gap-2 border-b border-slate-200 pb-2">
-                  <GraduationCap size={20} className="text-brand-green" /> 教育背景
+                  <GraduationCap size={20} className="text-brand-green" /> {t('team.education')}
                 </h2>
                 <ul className="space-y-3">
-                  {member.education.map((edu, i) => (
+                  {displayEdu.map((edu, i) => (
                     <li key={i} className="text-slate-600 flex items-start gap-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-brand-green mt-2 flex-shrink-0"></div>
                       {edu}
@@ -437,13 +471,13 @@ const MemberDetail = () => {
               </section>
             )}
 
-            {member.researchInterests && (
+            {displayInterests && (
               <section>
                 <h2 className="text-xl font-bold mb-4 flex items-center gap-2 border-b border-slate-200 pb-2">
-                  <Lightbulb size={20} className="text-brand-green" /> 研究兴趣
+                  <Lightbulb size={20} className="text-brand-green" /> {t('team.interests')}
                 </h2>
                 <div className="flex flex-wrap gap-2">
-                  {member.researchInterests.map((interest, i) => (
+                  {displayInterests.map((interest, i) => (
                     <span key={i} className="px-4 py-2 bg-brand-earth text-brand-green rounded-full text-sm font-medium">
                       {interest}
                     </span>
@@ -459,14 +493,7 @@ const MemberDetail = () => {
 };
 
 const LabLife = () => {
-  const categoryLabels: Record<string, string> = {
-    '聚餐': '聚餐',
-    '野外考察': '野外考察',
-    '团建活动': '团建活动',
-    '学术会议': '学术会议',
-    '日常': '日常',
-    '节日庆祝': '节日庆祝',
-  };
+  const { t, lang } = useI18n();
 
   const categoryColors: Record<string, string> = {
     '聚餐': 'bg-orange-100 text-orange-700',
@@ -481,10 +508,10 @@ const LabLife = () => {
     <div className="pt-32 pb-24 px-6 bg-white animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h3 className="text-sm font-bold text-brand-green tracking-widest uppercase mb-4">Lab Life</h3>
-          <h2 className="text-4xl md:text-5xl font-serif">课题组生活</h2>
+          <h3 className="text-sm font-bold text-brand-green tracking-widest uppercase mb-4">{t('life.subtitle')}</h3>
+          <h2 className="text-4xl md:text-5xl font-serif">{t('life.title')}</h2>
           <p className="text-slate-500 mt-4 max-w-xl mx-auto leading-relaxed">
-            科研之余，我们也是一个温暖的大家庭。这里记录了我们一起走过的美好时光。
+            {t('life.description')}
           </p>
         </div>
 
@@ -508,7 +535,7 @@ const LabLife = () => {
                     'px-3 py-1 rounded-full text-xs font-bold',
                     categoryColors[event.category] || 'bg-slate-100 text-slate-600',
                   )}>
-                    {categoryLabels[event.category]}
+                    {event.category}
                   </span>
                 </div>
               </div>
@@ -517,17 +544,17 @@ const LabLife = () => {
                   <Calendar size={14} />
                   <span>{event.date}</span>
                 </div>
-                <h4 className="text-xl font-bold mb-3 group-hover:text-brand-green transition-colors">{event.title}</h4>
+                <h4 className="text-xl font-bold mb-3 group-hover:text-brand-green transition-colors">{lang === 'en' && event.titleEn ? event.titleEn : event.title}</h4>
                 <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 font-light">
-                  {event.description}
+                  {lang === 'en' && event.descriptionEn ? event.descriptionEn : event.description}
                 </p>
                 <div className="mt-4 pt-4 border-t border-slate-50 flex items-center justify-between">
                   <span className="flex items-center gap-1.5 text-xs text-slate-400">
                     <Camera size={14} />
-                    {event.images.length} 张照片
+                    {event.images.length} {t('life.photos')}
                   </span>
                   <span className="text-sm font-medium text-brand-green flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-                    查看详情 <ChevronRight size={16} />
+                    {t('life.viewDetail')} <ChevronRight size={16} />
                   </span>
                 </div>
               </div>
@@ -542,12 +569,13 @@ const LabLife = () => {
 const LifeEventDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t, lang } = useI18n();
   const event = LIFE_EVENTS.find(e => e.id === id);
 
   if (!event) return (
     <div className="pt-32 text-center px-6">
-      <h2 className="text-2xl font-bold mb-4">未找到该活动</h2>
-      <Link to="/life" className="text-brand-green hover:underline">返回课题组生活</Link>
+      <h2 className="text-2xl font-bold mb-4">{t('life.notFound')}</h2>
+      <Link to="/life" className="text-brand-green hover:underline">{t('life.backToLife')}</Link>
     </div>
   );
 
@@ -560,6 +588,9 @@ const LifeEventDetail = () => {
     '节日庆祝': 'bg-red-100 text-red-700',
   };
 
+  const displayTitle = lang === 'en' && event.titleEn ? event.titleEn : event.title;
+  const displayDesc = lang === 'en' && event.descriptionEn ? event.descriptionEn : event.description;
+
   return (
     <div className="pt-32 pb-24 px-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="max-w-6xl mx-auto">
@@ -567,22 +598,20 @@ const LifeEventDetail = () => {
           onClick={() => navigate('/life')}
           className="flex items-center gap-2 text-slate-500 hover:text-brand-green mb-12 transition-colors"
         >
-          <ChevronLeft size={18} /> 返回课题组生活
+          <ChevronLeft size={18} /> {t('life.backToList')}
         </button>
 
         <div className="grid lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2">
-            {/* Cover image */}
             <div className="aspect-video rounded-3xl overflow-hidden mb-8 shadow-lg">
               <img
                 src={event.coverImage}
-                alt={event.title}
+                alt={displayTitle}
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
               />
             </div>
 
-            {/* Info */}
             <div className="flex flex-wrap items-center gap-4 mb-6">
               <span className={cn(
                 'px-4 py-1.5 rounded-full text-sm font-bold',
@@ -594,15 +623,15 @@ const LifeEventDetail = () => {
                 <Calendar size={16} /> {event.date}
               </span>
               <span className="flex items-center gap-2 text-slate-500 text-sm">
-                <Camera size={16} /> {event.images.length} 张照片
+                <Camera size={16} /> {event.images.length} {t('life.photos')}
               </span>
             </div>
 
-            <h1 className="text-3xl md:text-4xl font-serif font-bold mb-8">{event.title}</h1>
+            <h1 className="text-3xl md:text-4xl font-serif font-bold mb-8">{displayTitle}</h1>
 
             <div className="prose prose-slate max-w-none">
               <p className="text-lg text-slate-600 leading-relaxed font-light whitespace-pre-line">
-                {event.description}
+                {displayDesc}
               </p>
             </div>
 
@@ -612,17 +641,16 @@ const LifeEventDetail = () => {
                   <Heart size={20} className="text-brand-green" />
                 </div>
                 <p className="text-slate-500 text-sm font-light">
-                  课题组就是一个大家庭。我们不仅在学术上互相支持，也在生活中彼此陪伴。期待更多志同道合的朋友加入我们！
+                  {t('life.warmMessage')}
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Sidebar - all photos */}
           <div className="lg:col-span-1">
             <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
               <Camera size={20} className="text-brand-green" />
-              活动照片
+              {t('life.eventPhotos')}
             </h3>
             <div className="space-y-4">
               {event.images.map((img, i) => (
@@ -632,7 +660,7 @@ const LifeEventDetail = () => {
                 >
                   <img
                     src={img}
-                    alt={`${event.title} - 照片 ${i + 1}`}
+                    alt={`${displayTitle} - ${t('life.photos')} ${i + 1}`}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
@@ -647,12 +675,13 @@ const LifeEventDetail = () => {
 };
 
 const Contact = () => {
+  const { t } = useI18n();
   return (
     <div className="pt-32 pb-24 px-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-16">
-          <h3 className="text-sm font-bold text-brand-green tracking-widest uppercase mb-4">Get in Touch</h3>
-          <h2 className="text-4xl md:text-5xl font-serif">联系我们</h2>
+          <h3 className="text-sm font-bold text-brand-green tracking-widest uppercase mb-4">{t('contact.subtitle')}</h3>
+          <h2 className="text-4xl md:text-5xl font-serif">{t('contact.title')}</h2>
         </div>
 
         <div className="bg-white p-12 rounded-3xl shadow-sm border border-slate-100 grid md:grid-cols-2 gap-12">
@@ -662,11 +691,9 @@ const Contact = () => {
                 <MapPin size={24} />
               </div>
               <div>
-                <h4 className="text-xl font-bold mb-2">实验室地址</h4>
-                <p className="text-slate-500 leading-relaxed">
-                  云南大学国际河流与生态安全研究院<br />
-                  国际河流与生态安全研究院 1212室<br />
-                  中国 · 昆明
+                <h4 className="text-xl font-bold mb-2">{t('contact.address')}</h4>
+                <p className="text-slate-500 leading-relaxed whitespace-pre-line">
+                  {t('contact.addressText')}
                 </p>
               </div>
             </div>
@@ -676,7 +703,7 @@ const Contact = () => {
                 <Mail size={24} />
               </div>
               <div>
-                <h4 className="text-xl font-bold mb-2">电子邮箱</h4>
+                <h4 className="text-xl font-bold mb-2">{t('contact.email')}</h4>
                 <p className="text-slate-500">
                   rdwu@ynu.edu.cn<br />
                   yangyin@ynu.edu.cn
@@ -686,16 +713,16 @@ const Contact = () => {
           </div>
 
           <div className="relative rounded-2xl overflow-hidden h-64 md:h-auto border border-slate-100">
-            <img 
-              src="https://picsum.photos/seed/campus/800/600" 
-              alt="Campus location" 
+            <img
+              src="https://picsum.photos/seed/campus/800/600"
+              alt="Campus location"
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
             />
             <div className="absolute inset-0 bg-brand-green/10"></div>
             <div className="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-lg">
-              <p className="text-xs font-bold text-brand-green uppercase tracking-widest mb-1">University Location</p>
-              <p className="text-sm text-slate-700">欢迎访问我们的实验室进行学术交流</p>
+              <p className="text-xs font-bold text-brand-green uppercase tracking-widest mb-1">{t('contact.locationTitle')}</p>
+              <p className="text-sm text-slate-700">{t('contact.locationDesc')}</p>
             </div>
           </div>
         </div>
@@ -705,22 +732,25 @@ const Contact = () => {
 };
 
 const Footer = () => {
+  const { t, lang } = useI18n();
   return (
     <footer className="py-12 px-6 border-t border-slate-200 bg-white">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
         <Link to="/" className="flex items-center gap-2">
           <Globe className="text-brand-green" size={20} />
-          <span className="font-serif font-bold text-brand-green">保护生物地理研究组</span>
+          <span className="font-serif font-bold text-brand-green">{lang === 'zh' ? '保护生物地理研究组' : 'Conservation Biogeography Group'}</span>
         </Link>
-        
+
         <div className="text-slate-400 text-sm font-light">
-          © {new Date().getFullYear()} Conservation Biogeography Group. All rights reserved.
+          {t('footer.rights').replace('{year}', String(new Date().getFullYear()))}
         </div>
-        
+
         <div className="flex gap-6">
-          <a href="#" className="text-slate-400 hover:text-brand-green transition-colors"><Globe size={18} /></a>
-          <a href="#" className="text-slate-400 hover:text-brand-green transition-colors"><Users size={18} /></a>
-          <a href="#" className="text-slate-400 hover:text-brand-green transition-colors"><BookOpen size={18} /></a>
+          <a href="https://github.com/7CkShy" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-brand-green transition-colors" aria-label={t('github.link')}>
+            <Github size={18} />
+          </a>
+          <a href="#" className="text-slate-400 hover:text-brand-green transition-colors" aria-label="Globe"><Globe size={18} /></a>
+          <a href="#" className="text-slate-400 hover:text-brand-green transition-colors" aria-label="Publications"><BookOpen size={18} /></a>
         </div>
       </div>
     </footer>
