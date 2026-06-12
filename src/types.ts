@@ -3,6 +3,8 @@ export interface Member {
   name: string;
   nameEn?: string;
   role: 'Faculty' | 'Postdoc' | 'PhD Student' | 'Master Student' | 'Alumni';
+  cohort?: string;
+  cohortEn?: string;
   image: string;
   description: string;
   descriptionEn?: string;

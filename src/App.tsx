@@ -24,6 +24,7 @@ import {
   Languages,
   Newspaper,
 } from 'lucide-react';
+import type { Member } from './types';
 import { TEAM_MEMBERS, PUBLICATIONS, RESEARCH_AREAS, LIFE_EVENTS, NEWS_ITEMS } from './constants';
 import { useI18n } from './i18n.tsx';
 import { cn } from './lib/utils';
@@ -385,13 +386,25 @@ const Publications = () => {
 
 const Team = () => {
   const { t, lang } = useI18n();
-  const roles = ['Faculty', 'Postdoc', 'PhD Student', 'Master Student'];
 
-  const roleLabels: Record<string, string> = {
-    'Faculty': t('team.faculty'),
-    'Postdoc': t('team.postdoc'),
-    'PhD Student': t('team.phd'),
-    'Master Student': t('team.master'),
+  // Group members by cohort
+  const roleOrder = ['Faculty', 'Postdoc', 'PhD Student', 'Master Student'];
+  const sortedMembers = [...TEAM_MEMBERS].sort(
+    (a, b) => roleOrder.indexOf(a.role) - roleOrder.indexOf(b.role)
+  );
+
+  const cohortGroups: Record<string, Member[]> = {};
+  sortedMembers.forEach(m => {
+    const key = m.cohort || m.role;
+    if (!cohortGroups[key]) cohortGroups[key] = [];
+    cohortGroups[key].push(m);
+  });
+  // Keep insertion order (sorted by role)
+  const cohortEntries = Object.entries(cohortGroups);
+
+  const scrollToSection = (cohortId: string) => {
+    const el = document.getElementById(cohortId);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (
@@ -402,42 +415,85 @@ const Team = () => {
           <h2 className="text-4xl md:text-5xl font-serif">{t('team.title')}</h2>
         </div>
 
-        {roles.map(role => {
-          const members = TEAM_MEMBERS.filter(m => m.role === role);
-          if (members.length === 0) return null;
+        <div className="flex gap-12">
+          {/* Main content */}
+          <div className="flex-1 min-w-0">
+            {cohortEntries.map(([cohortKey, members]) => {
+              const cohortId = `cohort-${cohortKey.replace(/\s+/g, '-')}`;
+              const sample = members[0];
+              const displayCohort = lang === 'en' && sample.cohortEn ? sample.cohortEn : cohortKey;
 
-          return (
-            <div key={role} className="mb-20 last:mb-0">
-              <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-8 border-b border-slate-100 pb-4">
-                {roleLabels[role]}
-              </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                {members.map((member) => (
-                  <Link
-                    key={member.id}
-                    to={`/team/${member.id}`}
-                    className="group"
-                  >
-                    <div className="relative aspect-square rounded-3xl overflow-hidden mb-6">
-                      <img
-                        src={member.image}
-                        alt={member.name}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        referrerPolicy="no-referrer"
-                      />
-                      <div className="absolute inset-0 bg-brand-green/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <span className="bg-white text-brand-green px-4 py-2 rounded-full text-xs font-bold shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform">{t('team.viewDetail')}</span>
-                      </div>
-                    </div>
-                    <h5 className="text-xl font-bold mb-1 group-hover:text-brand-green transition-colors">{member.name}</h5>
-                    <p className="text-sm text-brand-green font-medium mb-3">{member.role}</p>
-                    <p className="text-sm text-slate-500 font-light line-clamp-2">{lang === 'en' && member.descriptionEn ? member.descriptionEn : member.description}</p>
-                  </Link>
-                ))}
-              </div>
+              return (
+                <div key={cohortKey} id={cohortId} className="mb-16 last:mb-0 scroll-mt-28">
+                  <h4 className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-6 border-b border-slate-100 pb-3">
+                    {displayCohort}
+                    <span className="ml-2 text-slate-300 font-normal">({members.length})</span>
+                  </h4>
+                  <div className="space-y-4">
+                    {members.map((member) => {
+                      const displayName = lang === 'en' && member.nameEn ? member.nameEn : member.name;
+                      return (
+                        <Link
+                          key={member.id}
+                          to={`/team/${member.id}`}
+                          className="group flex items-center gap-6 p-4 rounded-2xl hover:bg-brand-earth/50 transition-colors"
+                        >
+                          <div className="relative w-16 h-16 md:w-20 md:h-20 rounded-2xl overflow-hidden flex-shrink-0">
+                            <img
+                              src={member.image}
+                              alt={member.name}
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                              referrerPolicy="no-referrer"
+                            />
+                          </div>
+                          <div className="flex-grow min-w-0">
+                            <h5 className="text-base font-bold mb-1 group-hover:text-brand-green transition-colors">
+                              {displayName}
+                            </h5>
+                            <p className="text-sm text-slate-500 font-light line-clamp-1">
+                              {lang === 'en' && member.descriptionEn ? member.descriptionEn : member.description}
+                            </p>
+                          </div>
+                          <div className="flex-shrink-0">
+                            <ChevronRight size={18} className="text-slate-300 group-hover:text-brand-green group-hover:translate-x-1 transition-all" />
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Sidebar quick index */}
+          <aside className="hidden lg:block w-56 flex-shrink-0">
+            <div className="sticky top-28">
+              <h5 className="text-xs font-bold text-slate-400 tracking-widest uppercase mb-4">
+                {lang === 'zh' ? '快速索引' : 'Quick Index'}
+              </h5>
+              <nav className="space-y-1">
+                {cohortEntries.map(([cohortKey, members]) => {
+                  const cohortId = `cohort-${cohortKey.replace(/\s+/g, '-')}`;
+                  const sample = members[0];
+                  const displayCohort = lang === 'en' && sample.cohortEn ? sample.cohortEn : cohortKey;
+
+                  return (
+                    <button
+                      key={cohortKey}
+                      type="button"
+                      onClick={() => scrollToSection(cohortId)}
+                      className="block w-full text-left px-3 py-2 rounded-lg text-sm text-slate-500 hover:text-brand-green hover:bg-brand-earth/50 transition-colors"
+                    >
+                      <span>{displayCohort}</span>
+                      <span className="ml-2 text-xs text-slate-300">({members.length})</span>
+                    </button>
+                  );
+                })}
+              </nav>
             </div>
-          );
-        })}
+          </aside>
+        </div>
       </div>
     </div>
   );
