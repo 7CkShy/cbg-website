@@ -1,4 +1,4 @@
-import { Member, Publication, ResearchArea, LifeEvent } from './types';
+import { Member, Publication, ResearchArea, LifeEvent, NewsItem } from './types';
 
 export const TEAM_MEMBERS: Member[] = [
   {
@@ -137,6 +137,81 @@ export const RESEARCH_AREAS: ResearchArea[] = [
     descriptionEn: 'Using spatial analysis techniques to develop scientific conservation area planning and management solutions.',
     icon: 'Map',
   }
+];
+
+export const NEWS_ITEMS: NewsItem[] = [
+  {
+    id: 'n1',
+    title: '课题组在Nature Communications发表论文揭示全球保护区保护成效',
+    titleEn: 'Group Publishes in Nature Communications on Global Protected Area Effectiveness',
+    date: '2025-05-20',
+    category: '论文发表',
+    summary: '武瑞东老师团队在Nature Communications发表研究成果，系统评估了全球自然保护区在减缓生物多样性丧失方面的成效。',
+    summaryEn: 'Prof. Wu\'s team published a study in Nature Communications systematically evaluating the effectiveness of global protected areas in mitigating biodiversity loss.',
+    content: '2025年5月，课题组在Nature Communications上发表了题为"Global patterns of biodiversity conservation in the Anthropocene"的研究论文。该研究利用全球尺度的生物多样性数据，系统评估了过去30年间全球陆地自然保护区网络在减缓物种栖息地丧失和种群下降方面的成效。\n\n研究发现，虽然自然保护区的覆盖面积不断扩大，但保护成效存在显著的区域差异。热带地区的保护区面临更大的管理压力和人为干扰，亟需加强保护力度。\n\n该研究为全球生物多样性保护政策的制定提供了重要的科学依据，受到了国际学术界的广泛关注。',
+    contentEn: 'In May 2025, the group published a research paper titled "Global patterns of biodiversity conservation in the Anthropocene" in Nature Communications. The study used global-scale biodiversity data to systematically evaluate the effectiveness of the global terrestrial protected area network in mitigating habitat loss and population declines over the past 30 years.\n\nThe study found that while protected area coverage has been continuously expanding, there are significant regional differences in conservation effectiveness. Protected areas in tropical regions face greater management pressures and human disturbances, requiring urgent strengthening of conservation efforts.\n\nThis research provides important scientific evidence for global biodiversity conservation policy-making and has received widespread attention from the international academic community.',
+    image: 'https://picsum.photos/seed/nature-comms/800/400',
+  },
+  {
+    id: 'n2',
+    title: '课题组赴昆明参加第十五届全国生物多样性科学与保护研讨会',
+    titleEn: 'Group Attends the 15th National Symposium on Biodiversity Science and Conservation',
+    date: '2025-04-15',
+    category: '学术会议',
+    summary: '课题组成员参加了在昆明举办的第十五届全国生物多样性科学与保护研讨会，武瑞东老师作大会特邀报告，多名研究生进行海报展示。',
+    summaryEn: 'Group members attended the 15th National Symposium on Biodiversity Science and Conservation in Kunming, where Prof. Wu gave an invited keynote and several graduate students presented posters.',
+    content: '2025年4月12日至15日，第十五届全国生物多样性科学与保护研讨会在云南昆明举行。课题组全体成员参加了此次盛会。\n\n武瑞东老师应大会邀请作了题为"全球变化背景下的生物多样性保护优先区识别"的大会特邀报告，系统介绍了课题组近年来在保护优先区规划方面的最新研究成果，引起了与会学者的广泛关注和热烈讨论。\n\n博士研究生罗金怡和硕士研究生蔡凯分别以海报形式展示了各自的阶段性研究成果，其中罗金怡的海报获评"优秀海报奖"。\n\n会议期间，课题组还组织了与国内外多位专家的学术交流，为下一步的合作研究奠定了良好基础。',
+    contentEn: 'From April 12 to 15, 2025, the 15th National Symposium on Biodiversity Science and Conservation was held in Kunming, Yunnan. All group members attended this grand event.\n\nProf. Wu was invited to give a keynote presentation titled "Identification of Biodiversity Conservation Priority Areas under Global Change," systematically introducing the group\'s latest research achievements in conservation priority area planning, which attracted widespread attention and lively discussion from attending scholars.\n\nPhD student Jinyi Luo and Master student Kai Cai presented their research progress as posters, with Jinyi Luo\'s poster winning the "Outstanding Poster Award."\n\nDuring the conference, the group also organized academic exchanges with multiple domestic and international experts, laying a good foundation for future collaborative research.',
+    image: 'https://picsum.photos/seed/symposium2025/800/400',
+  },
+  {
+    id: 'n3',
+    title: '刘鑫博士获中国博士后科学基金面上资助',
+    titleEn: 'Dr. Xin Liu Receives China Postdoctoral Science Foundation Grant',
+    date: '2025-03-10',
+    category: '获奖荣誉',
+    summary: '课题组博士后刘鑫博士成功获得中国博士后科学基金面上资助，用于开展全球维管植物多样性热点区域的变化趋势研究。',
+    summaryEn: 'Postdoc Dr. Xin Liu successfully obtained funding from the China Postdoctoral Science Foundation to study change trends in global vascular plant diversity hotspots.',
+    content: '2025年3月，中国博士后科学基金会公布了第77批面上资助获选名单。课题组博士后刘鑫博士申报的项目"全球变化背景下维管植物多样性热点区域的时空变迁趋势"成功获得资助。\n\n该项目将利用全球尺度的植物分布数据，结合气候变化和土地利用变化情景，分析全球维管植物多样性热点区域的时空变迁趋势及其驱动机制，为全球植物多样性保护提供科学支撑。\n\n这是课题组博士后首次获得中国博士后科学基金资助，标志着课题组人才培养工作取得新进展。',
+    contentEn: 'In March 2025, the China Postdoctoral Science Foundation announced the recipients of the 77th batch of general funding. Dr. Xin Liu\'s project "Spatiotemporal Change Trends of Vascular Plant Diversity Hotspots under Global Change" was successfully funded.\n\nThis project will use global-scale plant distribution data, combined with climate change and land use change scenarios, to analyze spatiotemporal change trends and driving mechanisms of global vascular plant diversity hotspots, providing scientific support for global plant diversity conservation.\n\nThis is the first time a postdoc in the group has received funding from the China Postdoctoral Science Foundation, marking new progress in the group\'s talent cultivation work.',
+    image: 'https://picsum.photos/seed/grant2025/800/400',
+  },
+  {
+    id: 'n4',
+    title: '课题组启动云南省自然保护地整合优化研究项目',
+    titleEn: 'Group Launches Yunnan Province Protected Area Integration and Optimization Research Project',
+    date: '2025-01-05',
+    category: '项目动态',
+    summary: '课题组正式启动云南省自然保护地整合优化研究项目，旨在为云南省保护地体系建设提供科学决策支持。',
+    summaryEn: 'The group officially launched a research project on the integration and optimization of protected areas in Yunnan Province, aiming to provide scientific decision support for the province\'s protected area system.',
+    content: '2025年1月，课题组正式启动了"云南省自然保护地整合优化与生态产品价值核算"研究项目。该项目由云南省基础研究专项重大项目资助，执行期为三年。\n\n项目将围绕云南省"以国家公园为主体的自然保护地体系"建设需求，开展以下研究：\n1. 全省自然保护地空间分布格局与保护成效评估\n2. 保护地整合优化方案与优先区规划\n3. 重点区域生态产品价值核算\n\n项目启动会上，武瑞东老师明确了各成员的任务分工和工作计划，强调要注重科研成果的政策转化，为云南省生态文明建设贡献力量。',
+    contentEn: 'In January 2025, the group officially launched the "Integration and Optimization of Protected Areas and Ecosystem Product Value Accounting in Yunnan Province" research project, funded by the Yunnan Provincial Basic Research Program Major Project with a three-year implementation period.\n\nThe project will focus on the needs of Yunnan Province\'s "protected area system with national parks as the main body" and conduct the following research:\n1. Assessment of spatial distribution patterns and conservation effectiveness of provincial protected areas\n2. Protected area integration and optimization plans and priority area planning\n3. Ecosystem product value accounting in key regions\n\nAt the project kick-off meeting, Prof. Wu clarified task assignments and work plans for each member, emphasizing the importance of translating research results into policy to contribute to Yunnan\'s ecological civilization construction.',
+    image: 'https://picsum.photos/seed/project2025/800/400',
+  },
+  {
+    id: 'n5',
+    title: '课题组硕士研究生蔡凯通过学位论文开题答辩',
+    titleEn: 'Master Student Kai Cai Passes Thesis Proposal Defense',
+    date: '2024-12-18',
+    category: '其他',
+    summary: '蔡凯同学顺利通过硕士论文开题答辩，研究聚焦于全球孑遗物种对气候变化的脆弱性评估。',
+    summaryEn: 'Kai Cai successfully passed his master thesis proposal defense, with research focusing on vulnerability assessment of global relict species to climate change.',
+    content: '2024年12月18日，课题组二年级硕士研究生蔡凯同学顺利通过了学位论文开题答辩。\n\n蔡凯同学的论文题目为"全球孑遗物种分布格局及其对气候变化的脆弱性评估"，研究将整合全球孑遗物种的分布数据，利用物种分布模型和气候变化情景，评估不同气候情景下孑遗物种的灭绝风险和关键避难所分布。\n\n答辩委员会对选题的创新性和研究方案的可行性给予了充分肯定，并提出了建设性的修改建议。蔡凯同学将根据答辩委员会的意见进一步完善研究方案。',
+    contentEn: 'On December 18, 2024, second-year Master student Kai Cai successfully passed his thesis proposal defense.\n\nKai\'s thesis is titled "Global Distribution Patterns of Relict Species and Their Vulnerability Assessment to Climate Change." The study will integrate global distribution data of relict species, using species distribution models and climate change scenarios to assess extinction risks and key refugia distribution under different climate scenarios.\n\nThe defense committee fully affirmed the innovation of the topic and the feasibility of the research plan, while providing constructive suggestions for improvement. Kai will further refine the research plan based on the committee\'s feedback.',
+    image: 'https://picsum.photos/seed/defense2024/800/400',
+  },
+  {
+    id: 'n6',
+    title: '课题组研究成果被联合国生物多样性公约报告引用',
+    titleEn: 'Group Research Cited in UN Convention on Biological Diversity Report',
+    date: '2024-10-08',
+    category: '获奖荣誉',
+    summary: '课题组关于保护优先区规划的研究成果被联合国《生物多样性公约》全球生物多样性展望报告引用，彰显了课题组的国际学术影响力。',
+    summaryEn: 'The group\'s research on conservation priority area planning was cited in the UN Convention on Biological Diversity\'s Global Biodiversity Outlook report, highlighting the group\'s international academic influence.',
+    content: '2024年10月，联合国《生物多样性公约》（CBD）秘书处发布了第五版《全球生物多样性展望》（GBO-5），全面评估了全球生物多样性保护的进展与挑战。\n\n课题组此前在Nature Communications和Conservation Letters上发表的关于保护优先区识别和自然保护地规划的研究成果被该报告引用，作为支持全球生物多样性保护决策的科学依据。\n\n这一引用充分体现了课题组在保护生物地理学领域的国际学术影响力，也激励着课题组继续为全球生物多样性保护事业贡献中国智慧和中国方案。',
+    contentEn: 'In October 2024, the Secretariat of the UN Convention on Biological Diversity (CBD) released the fifth edition of the Global Biodiversity Outlook (GBO-5), comprehensively assessing global progress and challenges in biodiversity conservation.\n\nThe group\'s previous research on conservation priority area identification and protected area planning, published in Nature Communications and Conservation Letters, was cited in this report as scientific evidence supporting global biodiversity conservation decision-making.\n\nThis citation fully reflects the group\'s international academic influence in the field of conservation biogeography and inspires the group to continue contributing Chinese wisdom and Chinese solutions to global biodiversity conservation.',
+    image: 'https://picsum.photos/seed/cbd-report/800/400',
+  },
 ];
 
 export const LIFE_EVENTS: LifeEvent[] = [

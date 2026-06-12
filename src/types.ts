@@ -37,6 +37,19 @@ export interface ResearchArea {
   icon: string;
 }
 
+export interface NewsItem {
+  id: string;
+  title: string;
+  titleEn?: string;
+  date: string;
+  category: '论文发表' | '学术会议' | '获奖荣誉' | '项目动态' | '其他';
+  summary: string;
+  summaryEn?: string;
+  content: string;
+  contentEn?: string;
+  image?: string;
+}
+
 export interface LifeEvent {
   id: string;
   title: string;

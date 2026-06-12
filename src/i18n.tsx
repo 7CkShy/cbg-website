@@ -26,6 +26,7 @@ const translations: Record<Lang, Record<string, string>> = {
     'nav.publications': '发表成果',
     'nav.team': '团队成员',
     'nav.life': '课题组生活',
+    'nav.news': '新闻通知',
     'nav.contact': '联系我们',
     // Home
     'home.tagline': '探索自然规律 · 守护生物多样性',
@@ -34,9 +35,9 @@ const translations: Record<Lang, Record<string, string>> = {
     'home.description': '我们致力于研究生物多样性的空间分布格局及其驱动机制，利用多学科手段为全球变化背景下的生物多样性保护提供科学依据。',
     'home.ctaResearch': '了解我们的研究',
     'home.ctaPublications': '查看发表成果',
-    'home.latestResearch': 'Latest Research',
-    'home.recentPubs': '近期发表成果',
-    'home.viewAllPubs': '查看全部发表成果',
+    'home.newsTitle': '新闻通知',
+    'home.recentNews': '最新动态',
+    'home.viewAllNews': '查看全部新闻',
     // Research
     'research.title': '核心研究方向',
     'research.subtitle': 'Research Focus',
@@ -69,6 +70,14 @@ const translations: Record<Lang, Record<string, string>> = {
     'life.backToLife': '返回课题组生活',
     'life.eventPhotos': '活动照片',
     'life.warmMessage': '课题组就是一个大家庭。我们不仅在学术上互相支持，也在生活中彼此陪伴。期待更多志同道合的朋友加入我们！',
+    // News
+    'news.subtitle': 'News & Updates',
+    'news.title': '新闻通知',
+    'news.description': '了解课题组的最新动态，包括论文发表、学术会议、获奖荣誉和项目进展。',
+    'news.viewDetail': '阅读全文',
+    'news.backToList': '返回新闻列表',
+    'news.notFound': '未找到该新闻',
+    'news.backToNews': '返回新闻通知',
     // Contact
     'contact.subtitle': 'Get in Touch',
     'contact.title': '联系我们',
@@ -91,6 +100,7 @@ const translations: Record<Lang, Record<string, string>> = {
     'nav.publications': 'Publications',
     'nav.team': 'Team',
     'nav.life': 'Lab Life',
+    'nav.news': 'News',
     'nav.contact': 'Contact',
     // Home
     'home.tagline': 'Explore Nature · Conserve Biodiversity',
@@ -99,9 +109,9 @@ const translations: Record<Lang, Record<string, string>> = {
     'home.description': 'We study the spatial distribution patterns of biodiversity and their driving mechanisms, using multidisciplinary approaches to provide scientific evidence for biodiversity conservation under global change.',
     'home.ctaResearch': 'Explore Our Research',
     'home.ctaPublications': 'View Publications',
-    'home.latestResearch': 'Latest Research',
-    'home.recentPubs': 'Recent Publications',
-    'home.viewAllPubs': 'View All Publications',
+    'home.newsTitle': 'News',
+    'home.recentNews': 'Latest News',
+    'home.viewAllNews': 'View All News',
     // Research
     'research.title': 'Core Research Areas',
     'research.subtitle': 'Research Focus',
@@ -134,6 +144,14 @@ const translations: Record<Lang, Record<string, string>> = {
     'life.backToLife': 'Back to Lab Life',
     'life.eventPhotos': 'Event Photos',
     'life.warmMessage': 'Our lab is one big family. We support each other not only in academics but also in life. We look forward to welcoming more like-minded friends to join us!',
+    // News
+    'news.subtitle': 'News & Updates',
+    'news.title': 'News',
+    'news.description': 'Stay updated with the latest news from our group, including publications, conferences, awards, and project updates.',
+    'news.viewDetail': 'Read More',
+    'news.backToList': 'Back to News',
+    'news.notFound': 'News not found',
+    'news.backToNews': 'Back to News',
     // Contact
     'contact.subtitle': 'Get in Touch',
     'contact.title': 'Contact Us',

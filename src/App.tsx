@@ -22,8 +22,9 @@ import {
   ChevronLeft,
   Github,
   Languages,
+  Newspaper,
 } from 'lucide-react';
-import { TEAM_MEMBERS, PUBLICATIONS, RESEARCH_AREAS, LIFE_EVENTS } from './constants';
+import { TEAM_MEMBERS, PUBLICATIONS, RESEARCH_AREAS, LIFE_EVENTS, NEWS_ITEMS } from './constants';
 import { useI18n } from './i18n.tsx';
 import { cn } from './lib/utils';
 
@@ -55,6 +56,7 @@ const Navbar = () => {
     { key: 'nav.publications', href: '/publications' },
     { key: 'nav.team', href: '/team' },
     { key: 'nav.life', href: '/life' },
+    { key: 'nav.news', href: '/news' },
     { key: 'nav.contact', href: '/contact' },
   ];
 
@@ -219,44 +221,56 @@ const Home = () => {
       <section className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h3 className="text-sm font-bold text-brand-green tracking-widest uppercase mb-4">{t('home.latestResearch')}</h3>
-            <h2 className="text-4xl md:text-5xl font-serif">{t('home.recentPubs')}</h2>
+            <h3 className="text-sm font-bold text-brand-green tracking-widest uppercase mb-4">{t('home.newsTitle')}</h3>
+            <h2 className="text-4xl md:text-5xl font-serif">{t('home.recentNews')}</h2>
           </div>
 
-          <div className="space-y-6">
-            {PUBLICATIONS.slice(0, 3).map((pub) => (
-              <div
-                key={pub.id}
-                className="group bg-white p-6 md:p-8 rounded-2xl border border-slate-100 hover:shadow-lg transition-all flex flex-col md:flex-row md:items-center gap-6"
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {NEWS_ITEMS.slice(0, 3).map((news) => (
+              <Link
+                key={news.id}
+                to={`/news/${news.id}`}
+                className="group bg-white rounded-3xl border border-slate-100 overflow-hidden hover:shadow-xl transition-all duration-500"
               >
-                <div className="flex-shrink-0 w-16 h-16 bg-brand-earth rounded-xl flex flex-col items-center justify-center text-brand-green font-serif">
-                  <span className="text-xs font-bold uppercase">{pub.type}</span>
-                  <span className="text-lg font-bold">{pub.year}</span>
+                <div className="relative aspect-[16/10] overflow-hidden">
+                  <img
+                    src={news.image || 'https://picsum.photos/seed/news/800/400'}
+                    alt={news.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute top-4 left-4">
+                    <span className={cn(
+                      'px-3 py-1 rounded-full text-xs font-bold',
+                      news.category === '论文发表' ? 'bg-blue-100 text-blue-700' :
+                      news.category === '学术会议' ? 'bg-purple-100 text-purple-700' :
+                      news.category === '获奖荣誉' ? 'bg-amber-100 text-amber-700' :
+                      news.category === '项目动态' ? 'bg-green-100 text-green-700' :
+                      'bg-slate-100 text-slate-600'
+                    )}>
+                      {news.category}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex-grow">
-                  <h4 className="text-xl font-bold mb-2 group-hover:text-brand-green transition-colors">{lang === 'en' && pub.titleEn ? pub.titleEn : pub.title}</h4>
-                  <p className="text-slate-600 mb-1">{pub.authors}</p>
-                  <p className="text-sm italic text-slate-400">{pub.journal}</p>
+                <div className="p-6">
+                  <div className="flex items-center gap-3 text-sm text-slate-400 mb-3">
+                    <Calendar size={14} />
+                    <span>{news.date}</span>
+                  </div>
+                  <h4 className="text-lg font-bold mb-3 group-hover:text-brand-green transition-colors line-clamp-2">
+                    {lang === 'en' && news.titleEn ? news.titleEn : news.title}
+                  </h4>
+                  <p className="text-slate-500 text-sm leading-relaxed line-clamp-2 font-light">
+                    {lang === 'en' && news.summaryEn ? news.summaryEn : news.summary}
+                  </p>
                 </div>
-                <div className="flex-shrink-0">
-                  {pub.doi && (
-                    <a
-                      href={`https://doi.org/${pub.doi}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 text-sm font-medium text-brand-green hover:underline"
-                    >
-                      DOI: {pub.doi} <ExternalLink size={14} />
-                    </a>
-                  )}
-                </div>
-              </div>
+              </Link>
             ))}
           </div>
 
           <div className="mt-12 text-center">
-            <Link to="/publications" className="px-8 py-3 border border-brand-green text-brand-green rounded-full font-medium hover:bg-brand-green hover:text-white transition-all">
-              {t('home.viewAllPubs')}
+            <Link to="/news" className="px-8 py-3 border border-brand-green text-brand-green rounded-full font-medium hover:bg-brand-green hover:text-white transition-all">
+              {t('home.viewAllNews')}
             </Link>
           </div>
         </div>
@@ -695,6 +709,170 @@ const LifeEventDetail = () => {
   );
 };
 
+const NewsList = () => {
+  const { t, lang } = useI18n();
+
+  const categoryColors: Record<string, string> = {
+    '论文发表': 'bg-blue-100 text-blue-700',
+    '学术会议': 'bg-purple-100 text-purple-700',
+    '获奖荣誉': 'bg-amber-100 text-amber-700',
+    '项目动态': 'bg-green-100 text-green-700',
+    '其他': 'bg-slate-100 text-slate-600',
+  };
+
+  return (
+    <div className="pt-32 pb-24 px-6 bg-white animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h3 className="text-sm font-bold text-brand-green tracking-widest uppercase mb-4">{t('news.subtitle')}</h3>
+          <h2 className="text-4xl md:text-5xl font-serif">{t('news.title')}</h2>
+          <p className="text-slate-500 mt-4 max-w-xl mx-auto leading-relaxed">
+            {t('news.description')}
+          </p>
+        </div>
+
+        <div className="space-y-6">
+          {NEWS_ITEMS.map((news) => (
+            <Link
+              key={news.id}
+              to={`/news/${news.id}`}
+              className="group bg-white p-6 md:p-8 rounded-2xl border border-slate-100 hover:shadow-lg transition-all flex flex-col md:flex-row gap-6"
+            >
+              {news.image && (
+                <div className="flex-shrink-0 w-full md:w-48 h-32 rounded-xl overflow-hidden">
+                  <img
+                    src={news.image}
+                    alt={news.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+              )}
+              <div className="flex-grow">
+                <div className="flex flex-wrap items-center gap-3 mb-3">
+                  <span className={cn(
+                    'px-3 py-1 rounded-full text-xs font-bold',
+                    categoryColors[news.category] || 'bg-slate-100 text-slate-600',
+                  )}>
+                    {news.category}
+                  </span>
+                  <span className="flex items-center gap-1.5 text-sm text-slate-400">
+                    <Calendar size={14} />
+                    {news.date}
+                  </span>
+                </div>
+                <h4 className="text-xl font-bold mb-3 group-hover:text-brand-green transition-colors">
+                  {lang === 'en' && news.titleEn ? news.titleEn : news.title}
+                </h4>
+                <p className="text-slate-500 text-sm leading-relaxed font-light">
+                  {lang === 'en' && news.summaryEn ? news.summaryEn : news.summary}
+                </p>
+                <div className="mt-4 pt-4 border-t border-slate-50 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5 text-xs text-slate-400">
+                    <Newspaper size={14} />
+                    {t('news.viewDetail')}
+                  </span>
+                  <span className="text-sm font-medium text-brand-green flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                    {t('news.viewDetail')} <ChevronRight size={16} />
+                  </span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const NewsDetail = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { t, lang } = useI18n();
+  const news = NEWS_ITEMS.find(n => n.id === id);
+
+  if (!news) return (
+    <div className="pt-32 text-center px-6">
+      <h2 className="text-2xl font-bold mb-4">{t('news.notFound')}</h2>
+      <Link to="/news" className="text-brand-green hover:underline">{t('news.backToNews')}</Link>
+    </div>
+  );
+
+  const categoryColors: Record<string, string> = {
+    '论文发表': 'bg-blue-100 text-blue-700',
+    '学术会议': 'bg-purple-100 text-purple-700',
+    '获奖荣誉': 'bg-amber-100 text-amber-700',
+    '项目动态': 'bg-green-100 text-green-700',
+    '其他': 'bg-slate-100 text-slate-600',
+  };
+
+  const displayTitle = lang === 'en' && news.titleEn ? news.titleEn : news.title;
+  const displayContent = lang === 'en' && news.contentEn ? news.contentEn : news.content;
+
+  return (
+    <div className="pt-32 pb-24 px-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="max-w-4xl mx-auto">
+        <button
+          onClick={() => navigate('/news')}
+          className="flex items-center gap-2 text-slate-500 hover:text-brand-green mb-12 transition-colors"
+        >
+          <ChevronLeft size={18} /> {t('news.backToList')}
+        </button>
+
+        {news.image && (
+          <div className="aspect-[21/9] rounded-3xl overflow-hidden mb-8 shadow-lg">
+            <img
+              src={news.image}
+              alt={displayTitle}
+              className="w-full h-full object-cover"
+              referrerPolicy="no-referrer"
+            />
+          </div>
+        )}
+
+        <div className="flex flex-wrap items-center gap-4 mb-6">
+          <span className={cn(
+            'px-4 py-1.5 rounded-full text-sm font-bold',
+            categoryColors[news.category] || 'bg-slate-100 text-slate-600',
+          )}>
+            {news.category}
+          </span>
+          <span className="flex items-center gap-2 text-slate-500 text-sm">
+            <Calendar size={16} /> {news.date}
+          </span>
+        </div>
+
+        <h1 className="text-3xl md:text-4xl font-serif font-bold mb-10">{displayTitle}</h1>
+
+        <div className="prose prose-slate max-w-none">
+          {displayContent.split('\n').map((paragraph, i) => (
+            paragraph.trim() ? (
+              <p key={i} className="text-lg text-slate-600 leading-relaxed font-light mb-6">
+                {paragraph}
+              </p>
+            ) : null
+          ))}
+        </div>
+
+        <div className="mt-16 p-8 bg-brand-earth rounded-3xl border border-slate-100 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-brand-green/10 flex items-center justify-center">
+              <Newspaper size={20} className="text-brand-green" />
+            </div>
+            <span className="text-slate-500 text-sm font-light">{t('news.backToList')}</span>
+          </div>
+          <Link
+            to="/news"
+            className="px-6 py-2.5 bg-brand-green text-white rounded-full text-sm font-medium hover:bg-brand-green/90 transition-colors"
+          >
+            {t('news.backToList')}
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Contact = () => {
   const { t } = useI18n();
   return (
@@ -798,6 +976,8 @@ export default function App() {
           <Route path="/team/:id" element={<MemberDetail />} />
           <Route path="/life" element={<LabLife />} />
           <Route path="/life/:id" element={<LifeEventDetail />} />
+          <Route path="/news" element={<NewsList />} />
+          <Route path="/news/:id" element={<NewsDetail />} />
           <Route path="/contact" element={<Contact />} />
         </Routes>
       </main>
