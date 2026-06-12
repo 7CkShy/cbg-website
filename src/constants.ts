@@ -68,7 +68,7 @@ export const TEAM_MEMBERS: Member[] = [
     name: '蔡凯',
     nameEn: 'Kai Cai',
     role: 'Master Student',
-    image: '/image/team/ck.jpg',
+    image: './image/team/ck.jpg',
     description: '利用GIS技术分析自然保护区的有效性。',
     descriptionEn: 'Uses GIS technology to analyze the effectiveness of nature reserves.',
     fullBio: '蔡凯同学的研究兴趣在于探究全球孑遗物种与气候变化的响应关系，以及生物避难所的识别与保护。',

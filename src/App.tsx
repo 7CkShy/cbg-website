@@ -201,7 +201,7 @@ const Home = () => {
       {/* Hero: full-screen team photo with group name overlay */}
       <section className="relative h-screen overflow-hidden">
         <img
-          src="/image/team/home.jpg"
+          src="./image/team/home.jpg"
           alt="Conservation Biogeography Group"
           className="w-full h-full object-cover"
           referrerPolicy="no-referrer"
