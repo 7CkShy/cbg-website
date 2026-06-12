@@ -218,6 +218,20 @@ const Home = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-brand-earth pointer-events-none"></div>
       </section>
 
+      {/* Quote section */}
+      <section className="py-12 px-6 bg-brand-earth">
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="text-lg md:text-xl font-serif text-brand-green/70 italic">
+            {lang === 'zh'
+              ? '不积跬步，无以至千里；不积小流，无以成江海。'
+              : '"A journey of a thousand miles begins with a single step."'}
+          </p>
+          <p className="text-xs text-slate-400 mt-2">
+            {lang === 'zh' ? '—— 荀子《劝学篇》' : '— Xunzi'}
+          </p>
+        </div>
+      </section>
+
       <section className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
