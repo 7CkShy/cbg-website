@@ -128,7 +128,7 @@ const Home = () => {
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://picsum.photos/seed/conservation/1920/1080" 
+            src="/image/team/home.jpg" 
             alt="Nature background" 
             className="w-full h-full object-cover brightness-50"
             referrerPolicy="no-referrer"

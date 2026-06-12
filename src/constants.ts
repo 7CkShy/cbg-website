@@ -18,36 +18,37 @@ export const TEAM_MEMBERS: Member[] = [
   },
   {
     id: '2',
-    name: '李博士 (Dr. Li)',
+    name: '刘鑫 (Dr. Liu)',
     role: 'Postdoc',
     image: 'https://picsum.photos/seed/postdoc1/400/400',
     description: '专注于高山植物的分布格局及其对气候变化的响应。',
-    fullBio: '李博士于2023年加入研究组。他的研究重点是利用物种分布模型预测高山植物在未来气候情景下的迁移路径。',
+    fullBio: '刘鑫博士于2023年加入研究组。他的研究重点是全球维管植物的分布和全球生物多样性热点区域。',
     education: [
-      '博士, 植物学, 某某大学, 2023',
-      '学士, 生态学, 某某大学, 2018'
+      '博士，生态学, 云南大学, 2026',
+      '硕士, 资源与环境, 云南大学, 2023',
+      '学士, 水资源工程, 西安理工大学, 2018'
     ],
-    researchInterests: ['高山生态系统', '物种分布建模'],
+    researchInterests: ['全球变化生物学', '物种分布建模'],
   },
   {
     id: '3',
-    name: '王同学 (Wang)',
+    name: '罗金怡 (Wang)',
     role: 'PhD Student',
     image: 'https://picsum.photos/seed/student1/400/400',
     description: '研究岛屿生物地理学中的物种演化。',
-    fullBio: '王同学目前正在攻读博士学位，主要关注岛屿隔离程度对物种形成速率的影响。',
+    fullBio: '罗金怡同学目前正在攻读博士学位，主要研究全球生物多样性与环境异质性之间的响应关系。',
     education: ['学士, 生物科学, 某某大学, 2021'],
     researchInterests: ['岛屿生物地理学', '分子进化'],
   },
   {
     id: '4',
-    name: '赵同学 (Zhao)',
+    name: '蔡凯 (Zhao)',
     role: 'Master Student',
-    image: 'https://picsum.photos/seed/student2/400/400',
+    image: '/image/team/ck.jpg',
     description: '利用GIS技术分析自然保护区的有效性。',
-    fullBio: '赵同学的研究兴趣在于评估现有自然保护网络对濒危物种的覆盖程度。',
-    education: ['学士, 地理信息系统, 某某大学, 2022'],
-    researchInterests: ['GIS应用', '保护区评估'],
+    fullBio: '蔡凯同学的研究兴趣在于探究全球孑遗物种与气候变化的响应关系，以及生物避难所的识别与保护。',
+    education: ['学士, 地理信息系统, 陕西师范大学, 2025'],
+    researchInterests: ['GIS应用', '统计分析', '遥感数据处理'],
   }
 ];
 
