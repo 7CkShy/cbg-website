@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, useLocation, useParams, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import {
   Globe,
   Users,
@@ -23,11 +23,147 @@ import {
   Github,
   Languages,
   Newspaper,
+  Award,
+  FolderOpen,
 } from 'lucide-react';
 import type { Member } from './types';
 import { TEAM_MEMBERS, PUBLICATIONS, RESEARCH_AREAS, LIFE_EVENTS, NEWS_ITEMS } from './constants';
 import { useI18n } from './i18n.tsx';
 import { cn } from './lib/utils';
+
+const OpeningIntro = ({ onComplete }: { onComplete: () => void }) => {
+  const shouldReduceMotion = useReducedMotion();
+  const [isContentVisible, setIsContentVisible] = useState(true);
+  const fadeTimerRef = React.useRef<number | null>(null);
+  const openTimerRef = React.useRef<number | null>(null);
+
+  const beginReveal = React.useCallback((openingDelay: number) => {
+    if (fadeTimerRef.current !== null) window.clearTimeout(fadeTimerRef.current);
+    if (openTimerRef.current !== null) window.clearTimeout(openTimerRef.current);
+
+    setIsContentVisible(false);
+    openTimerRef.current = window.setTimeout(onComplete, openingDelay);
+  }, [onComplete]);
+
+  useEffect(() => {
+    const previousOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = 'hidden';
+
+    if (shouldReduceMotion) {
+      openTimerRef.current = window.setTimeout(onComplete, 120);
+    } else {
+      fadeTimerRef.current = window.setTimeout(() => beginReveal(900), 2300);
+    }
+
+    return () => {
+      if (fadeTimerRef.current !== null) window.clearTimeout(fadeTimerRef.current);
+      if (openTimerRef.current !== null) window.clearTimeout(openTimerRef.current);
+      document.documentElement.style.overflow = previousOverflow;
+    };
+  }, [beginReveal, onComplete, shouldReduceMotion]);
+
+  const duration = shouldReduceMotion ? 0.01 : 0.9;
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-[100] flex items-center justify-center overflow-hidden text-white"
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 1 }}
+      role="status"
+      aria-label="网站正在打开"
+    >
+      <motion.div
+        className="absolute inset-x-0 top-0 h-1/2 overflow-hidden bg-[#173d2b]"
+        exit={{ y: '-102%' }}
+        transition={{ duration, ease: [0.76, 0, 0.24, 1] }}
+      >
+        <img
+          src="./image/team/home.jpg"
+          alt=""
+          className="absolute left-0 top-0 h-screen w-screen object-cover grayscale"
+        />
+        <div className="absolute inset-0 bg-[#173d2b]/88" />
+      </motion.div>
+      <motion.div
+        className="absolute inset-x-0 bottom-0 h-1/2 overflow-hidden bg-[#173d2b]"
+        exit={{ y: '102%' }}
+        transition={{ duration, ease: [0.76, 0, 0.24, 1] }}
+      >
+        <img
+          src="./image/team/home.jpg"
+          alt=""
+          className="absolute bottom-0 left-0 h-screen w-screen object-cover grayscale"
+        />
+        <div className="absolute inset-0 bg-[#173d2b]/88" />
+      </motion.div>
+
+      <motion.button
+        type="button"
+        onClick={() => beginReveal(650)}
+        className="absolute right-5 top-5 z-30 border-b border-white/40 px-1 py-2 text-xs text-white/70 transition-colors hover:text-white md:right-8 md:top-7"
+        animate={{ opacity: isContentVisible ? 1 : 0 }}
+        transition={{ duration: shouldReduceMotion ? 0.01 : 0.35 }}
+      >
+        跳过开场
+      </motion.button>
+
+      <motion.div
+        className="pointer-events-none absolute left-6 top-6 z-20 hidden items-center gap-3 text-[10px] uppercase tracking-[0.24em] text-white/45 md:flex"
+        animate={{ opacity: isContentVisible ? 1 : 0 }}
+        transition={{ duration: shouldReduceMotion ? 0.01 : 0.45 }}
+      >
+        <span className="block h-px w-8 bg-white/35" />
+        YNU · Kunming
+      </motion.div>
+
+      <motion.div
+        className="pointer-events-none absolute left-0 right-0 top-1/2 z-20 h-px bg-white/15"
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: 1, opacity: isContentVisible ? 1 : 0 }}
+        transition={{ duration: shouldReduceMotion ? 0.01 : isContentVisible ? 1.4 : 0.45, ease: [0.22, 1, 0.36, 1] }}
+      />
+
+      <motion.div
+        className="relative z-20 flex max-w-[90vw] flex-col items-center text-center"
+        initial={shouldReduceMotion ? false : { opacity: 0, y: 18 }}
+        animate={isContentVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: -8 }}
+        transition={{
+          opacity: { duration: shouldReduceMotion ? 0.01 : isContentVisible ? 0.7 : 0.65 },
+          y: { duration: shouldReduceMotion ? 0.01 : 0.7 },
+          delay: shouldReduceMotion ? 0 : isContentVisible ? 0.2 : 0,
+        }}
+      >
+        <motion.div
+          className="relative mb-7 flex h-14 w-20 items-center justify-center border-y border-white/35 font-serif text-lg tracking-[0.18em] text-white/90"
+          initial={shouldReduceMotion ? false : { opacity: 0, scaleX: 0.75 }}
+          animate={{ opacity: 1, scaleX: 1 }}
+          transition={{ duration: shouldReduceMotion ? 0.01 : 0.8, delay: shouldReduceMotion ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
+        >
+          CBG
+        </motion.div>
+
+        <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.32em] text-white/65 md:text-xs">
+          Yunnan University
+        </p>
+        <h1 className="text-3xl font-medium leading-tight md:text-5xl">
+          保护生物地理研究组
+        </h1>
+        <p className="mt-3 font-serif text-base text-white/75 md:text-xl">
+          Conservation Biogeography Research Group
+        </p>
+
+        <div className="mt-9 h-px w-44 overflow-hidden bg-white/20">
+          <motion.div
+            className="h-full w-full origin-left bg-white/70"
+            initial={{ scaleX: 0, opacity: 1 }}
+            animate={isContentVisible ? { scaleX: 1, opacity: 1 } : { scaleX: 1, opacity: 0 }}
+            transition={{ duration: shouldReduceMotion ? 0.01 : isContentVisible ? 1.8 : 0.35, delay: shouldReduceMotion ? 0 : isContentVisible ? 0.55 : 0 }}
+          />
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -505,6 +641,7 @@ const MemberDetail = () => {
   const navigate = useNavigate();
   const { t, lang } = useI18n();
   const member = TEAM_MEMBERS.find(m => m.id === id);
+  const [showAllPublications, setShowAllPublications] = useState(false);
 
   if (!member) return <div className="pt-32 text-center">{t('member.notFound')}</div>;
 
@@ -512,6 +649,14 @@ const MemberDetail = () => {
   const displayBio = lang === 'en' && member.fullBioEn ? member.fullBioEn : (member.fullBio || member.description);
   const displayEdu = lang === 'en' && member.educationEn ? member.educationEn : member.education;
   const displayInterests = lang === 'en' && member.researchInterestsEn ? member.researchInterestsEn : member.researchInterests;
+  const displayTitle = lang === 'en' && member.titleEn ? member.titleEn : (member.title || member.role);
+  const displayHonors = lang === 'en' && member.honorsEn ? member.honorsEn : member.honors;
+  const displayProjects = lang === 'en' && member.projectsEn ? member.projectsEn : member.projects;
+  const displayCourses = lang === 'en' && member.coursesEn ? member.coursesEn : member.courses;
+  const displayAdmissions = lang === 'en' && member.admissionsEn ? member.admissionsEn : member.admissions;
+  const visiblePublications = showAllPublications
+    ? member.selectedPublications
+    : member.selectedPublications?.slice(0, 8);
 
   return (
     <div className="pt-32 pb-24 px-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -535,7 +680,13 @@ const MemberDetail = () => {
             </div>
             <div className="space-y-4">
               <h1 className="text-3xl font-serif font-bold">{displayName}</h1>
-              <p className="text-brand-green font-medium">{member.role}</p>
+              <p className="text-brand-green font-medium leading-relaxed">{displayTitle}</p>
+              {displayHonors?.map((honor) => (
+                <div key={honor} className="flex items-start gap-3 text-sm leading-relaxed text-slate-500">
+                  <Award size={17} className="mt-0.5 flex-shrink-0 text-brand-green" />
+                  <span>{honor}</span>
+                </div>
+              ))}
               {member.email && (
                 <div className="flex items-center gap-3 text-slate-600">
                   <Mail size={18} className="text-brand-green" />
@@ -589,6 +740,86 @@ const MemberDetail = () => {
                     </span>
                   ))}
                 </div>
+              </section>
+            )}
+
+            {displayProjects && (
+              <section>
+                <h2 className="text-xl font-bold mb-5 flex items-center gap-2 border-b border-slate-200 pb-2">
+                  <FolderOpen size={20} className="text-brand-green" /> {t('team.projects')}
+                </h2>
+                <ol className="divide-y divide-slate-100">
+                  {displayProjects.map((project, i) => (
+                    <li key={project} className="grid grid-cols-[2rem_1fr] gap-3 py-4 first:pt-0">
+                      <span className="pt-0.5 font-serif text-sm text-brand-green/60">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <p className="text-slate-600 leading-relaxed">{project}</p>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            )}
+
+            {(displayCourses || displayAdmissions) && (
+              <div className="grid gap-10 border-y border-slate-200 py-8 sm:grid-cols-2">
+                {displayCourses && (
+                  <section>
+                    <h2 className="mb-4 flex items-center gap-2 text-base font-bold">
+                      <BookOpen size={18} className="text-brand-green" /> {t('team.teaching')}
+                    </h2>
+                    <ul className="space-y-2 text-slate-600">
+                      {displayCourses.map(course => <li key={course}>{course}</li>)}
+                    </ul>
+                  </section>
+                )}
+                {displayAdmissions && (
+                  <section>
+                    <h2 className="mb-4 flex items-center gap-2 text-base font-bold">
+                      <GraduationCap size={18} className="text-brand-green" /> {t('team.admissions')}
+                    </h2>
+                    <ul className="space-y-2 text-slate-600">
+                      {displayAdmissions.map(direction => (
+                        <li key={direction} className="flex items-start gap-2">
+                          <span className="mt-2 h-1 w-1 flex-shrink-0 rounded-full bg-brand-green" />
+                          <span>{direction}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
+              </div>
+            )}
+
+            {visiblePublications && member.selectedPublications && (
+              <section>
+                <div className="mb-5 flex items-end justify-between gap-4 border-b border-slate-200 pb-2">
+                  <h2 className="flex items-center gap-2 text-xl font-bold">
+                    <Newspaper size={20} className="text-brand-green" /> {t('team.selectedPublications')}
+                  </h2>
+                  <span className="flex-shrink-0 text-xs text-slate-400">
+                    {member.selectedPublications.length} {lang === 'zh' ? '项' : 'items'}
+                  </span>
+                </div>
+                <ol className="space-y-5">
+                  {visiblePublications.map((publication, i) => (
+                    <li key={publication} className="grid grid-cols-[2rem_1fr] gap-3">
+                      <span className="pt-1 font-serif text-sm text-brand-green/60">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <p className="text-sm leading-7 text-slate-600">{publication}</p>
+                    </li>
+                  ))}
+                </ol>
+                {member.selectedPublications.length > 8 && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllPublications(value => !value)}
+                    className="mt-8 border-b border-brand-green/40 pb-1 text-sm font-medium text-brand-green transition-colors hover:border-brand-green"
+                  >
+                    {showAllPublications ? t('team.showLessPublications') : t('team.showAllPublications')}
+                  </button>
+                )}
               </section>
             )}
           </div>
@@ -1029,6 +1260,9 @@ const Footer = () => {
 
 export default function App() {
   const { pathname } = useLocation();
+  const [showOpening, setShowOpening] = useState(true);
+
+  const completeOpening = React.useCallback(() => setShowOpening(false), []);
 
   // Scroll to top on route change
   useEffect(() => {
@@ -1036,23 +1270,29 @@ export default function App() {
   }, [pathname]);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-grow">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/research" element={<Research />} />
-          <Route path="/publications" element={<Publications />} />
-          <Route path="/team" element={<Team />} />
-          <Route path="/team/:id" element={<MemberDetail />} />
-          <Route path="/life" element={<LabLife />} />
-          <Route path="/life/:id" element={<LifeEventDetail />} />
-          <Route path="/news" element={<NewsList />} />
-          <Route path="/news/:id" element={<NewsDetail />} />
-          <Route path="/contact" element={<Contact />} />
-        </Routes>
-      </main>
-      <Footer />
-    </div>
+    <>
+      <AnimatePresence>
+        {showOpening && <OpeningIntro onComplete={completeOpening} />}
+      </AnimatePresence>
+
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/research" element={<Research />} />
+            <Route path="/publications" element={<Publications />} />
+            <Route path="/team" element={<Team />} />
+            <Route path="/team/:id" element={<MemberDetail />} />
+            <Route path="/life" element={<LabLife />} />
+            <Route path="/life/:id" element={<LifeEventDetail />} />
+            <Route path="/news" element={<NewsList />} />
+            <Route path="/news/:id" element={<NewsDetail />} />
+            <Route path="/contact" element={<Contact />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </>
   );
 }

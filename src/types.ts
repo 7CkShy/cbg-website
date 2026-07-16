@@ -5,6 +5,10 @@ export interface Member {
   role: 'Faculty' | 'Postdoc' | 'PhD Student' | 'Master Student' | 'Alumni';
   cohort?: string;
   cohortEn?: string;
+  title?: string;
+  titleEn?: string;
+  honors?: string[];
+  honorsEn?: string[];
   image: string;
   description: string;
   descriptionEn?: string;
@@ -14,6 +18,13 @@ export interface Member {
   educationEn?: string[];
   researchInterests?: string[];
   researchInterestsEn?: string[];
+  projects?: string[];
+  projectsEn?: string[];
+  courses?: string[];
+  coursesEn?: string[];
+  admissions?: string[];
+  admissionsEn?: string[];
+  selectedPublications?: string[];
   email?: string;
   website?: string;
 }
